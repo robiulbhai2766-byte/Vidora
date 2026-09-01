@@ -3,38 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vidora - AI Powered Video Sharing</title>
+    <title>Vidora - Watch & Share Videos</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Vidora</h1>
-        <p class="subtitle">AI-Powered Video Sharing Platform</p>
+    <!-- YouTube Style Header Bar -->
+    <header class="navbar">
+        <div class="logo-container">
+            <i class="fa-brands fa-youtube logo-icon"></i>
+            <span class="logo-text">Vidora</span>
+        </div>
+        
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search videos...">
+            <button><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
 
-        <!-- ভিডিও আপলোড সেকশন -->
-        <div class="card">
-            <h2>ভিডিও আপলোড করুন</h2>
+        <div class="user-actions">
+            <button class="upload-btn" onclick="openModal()"><i class="fa-solid fa-video"></i> Create</button>
+            <div class="user-avatar"><i class="fa-solid fa-user"></i></div>
+        </div>
+    </header>
+
+    <!-- Upload Modal Pop-up -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2>Upload Video to Vidora</h2>
+            
             <form id="uploadForm">
-                <input type="text" id="videoTitle" placeholder="ভিডিও শিরোনাম লিখুন..." required>
+                <input type="text" id="videoTitle" placeholder="Video Title" required>
                 <input type="file" id="videoFile" accept="video/*" required>
                 
-                <!-- 🛑 রোবট চেক (Honeypot) -->
-                <input type="text" id="robotCheck" name="robotCheck" style="display:none !important;" tabindex="-1" autocomplete="off">
+                <!-- Security Honeypot -->
+                <input type="text" id="robotCheck" style="display:none !important;" tabindex="-1" autocomplete="off">
 
-                <button type="submit" id="uploadBtn">Upload Video</button>
+                <button type="submit" id="submitBtn">Upload</button>
             </form>
         </div>
-
-        <!-- ভিডিও গ্যালারি সেকশন -->
-        <div class="gallery-section">
-            <h2>সাম্প্রতিক আপলোডসমূহ</h2>
-            <div id="videoGallery" class="gallery-grid">
-                <p>ভিডিও লোড হচ্ছে...</p>
-            </div>
-        </div>
     </div>
+
+    <!-- YouTube Style Video Grid Feed -->
+    <main class="main-content">
+        <h2>Recommended Videos</h2>
+        <div id="videoGallery" class="video-grid">
+            <p class="loading-text">Loading videos...</p>
+        </div>
+    </main>
 
     <script src="script.js"></script>
 </body>
