@@ -4,9 +4,243 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vidora - Home</title>
-    <link rel="stylesheet" href="frontend/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0f0f0f;
+            color: #f1f1f1;
+        }
+
+        /* Header */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #0f0f0f;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #272727;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            color: #ff0000;
+            font-size: 1.8rem;
+        }
+
+        .search-bar {
+            display: flex;
+            width: 40%;
+            max-width: 600px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px 15px;
+            background-color: #121212;
+            border: 1px solid #303030;
+            border-radius: 20px 0 0 20px;
+            color: white;
+            outline: none;
+        }
+
+        .search-bar button {
+            padding: 10px 20px;
+            background-color: #222222;
+            border: 1px solid #303030;
+            border-left: none;
+            border-radius: 0 20px 20px 0;
+            color: white;
+            cursor: pointer;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .upload-btn {
+            background-color: #272727;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .upload-btn:hover {
+            background-color: #3f3f3f;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            background-color: #38bdf8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-weight: bold;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 20px 30px;
+        }
+
+        .main-content h2 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #aaa;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .video-card {
+            background-color: #0f0f0f;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .video-card:hover {
+            transform: scale(1.02);
+        }
+
+        .video-thumb {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            background-color: #000;
+            border-radius: 12px;
+        }
+
+        .video-details {
+            padding: 10px 5px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .channel-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #272727;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .video-info {
+            flex: 1;
+        }
+
+        .video-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            line-height: 1.3;
+            color: #f1f1f1;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .channel-name {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+
+        .modal-content {
+            background-color: #212121;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 450px;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .modal-content input {
+            padding: 10px;
+            background: #121212;
+            border: 1px solid #383838;
+            color: white;
+            border-radius: 6px;
+        }
+
+        .modal-content button {
+            padding: 10px;
+            background: #cc0000;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
@@ -34,7 +268,6 @@
         </div>
     </main>
 
-    <!-- Upload Modal -->
     <div id="uploadModal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -43,11 +276,100 @@
                 <input type="text" id="robotCheck" style="display:none;">
                 <input type="file" id="videoFile" accept="video/*" required>
                 <input type="text" id="videoTitle" placeholder="Video Title" required>
-                <button type="submit">Upload</button>
+                <button type="submit">Upload Video</button>
             </form>
         </div>
     </div>
 
-    <script src="frontend/script.js"></script>
+    <script>
+        const SUPABASE_URL = "https://zandggntfbtvicujtmk.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_i1v72sFTP5M39a9JvMN-g_SU9C6ur3";
+
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let pageLoadTime = Date.now();
+
+        function openModal() {
+            document.getElementById('uploadModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('uploadModal').style.display = 'none';
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const robotField = document.getElementById('robotCheck').value;
+            if (robotField !== "") {
+                alert("🚨 Security Alert: Bot detected!");
+                return false;
+            }
+
+            let timeTaken = (Date.now() - pageLoadTime) / 1000;
+            if (timeTaken < 3) {
+                alert("🚨 Security Alert: Submitted too fast!");
+                return false;
+            }
+
+            const fileInput = document.getElementById('videoFile');
+            const file = fileInput.files[0];
+
+            if (!file) return;
+
+            alert("🤖 Security Passed! Uploading video...");
+
+            const fileName = `${Date.now()}_${file.name}`;
+            const { data, error } = await supabase.storage.from('videos').upload(fileName, file);
+
+            if (error) {
+                alert("Upload Error: " + error.message);
+            } else {
+                alert("🎉 Upload Successful!");
+                closeModal();
+                loadVideos();
+            }
+        });
+
+        async function loadVideos() {
+            const gallery = document.getElementById('videoGallery');
+            
+            const { data, error } = await supabase.storage.from('videos').list('', {
+                limit: 100,
+                sortBy: { column: 'created_at', order: 'desc' }
+            });
+
+            if (error || !data || data.length === 0) {
+                gallery.innerHTML = "<p>No videos uploaded yet.</p>";
+                return;
+            }
+
+            gallery.innerHTML = "";
+
+            data.forEach(file => {
+                const { data: publicUrlData } = supabase.storage.from('videos').getPublicUrl(file.name);
+                
+                const videoCard = document.createElement('div');
+                videoCard.className = 'video-card';
+                videoCard.onclick = () => {
+                    window.location.href = `watch.html?v=${encodeURIComponent(file.name)}`;
+                };
+
+                videoCard.innerHTML = `
+                    <video class="video-thumb" src="${publicUrlData.publicUrl}#t=0.5" preload="metadata"></video>
+                    <div class="video-details">
+                        <div class="channel-icon"><i class="fa-solid fa-play"></i></div>
+                        <div class="video-info">
+                            <div class="video-title">${file.name.replace(/^\d+_/, '')}</div>
+                            <div class="channel-name">Vidora Creator</div>
+                        </div>
+                    </div>
+                `;
+                gallery.appendChild(videoCard);
+            });
+        }
+
+        loadVideos();
+    </script>
 </body>
 </html>
