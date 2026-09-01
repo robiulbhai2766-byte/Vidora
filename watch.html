@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vidora - Watch Video</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="navbar">
+        <div class="logo-container" onclick="window.location.href='index.html'">
+            <i class="fa-brands fa-youtube logo-icon"></i>
+            <span class="logo-text">Vidora</span>
+        </div>
+        <button class="upload-btn" onclick="window.location.href='index.html'"><i class="fa-solid fa-house"></i> Home</button>
+    </header>
+
+    <!-- Watch Container -->
+    <main class="watch-container">
+        <div class="video-player-box">
+            <video id="mainVideoPlayer" controls autoplay></video>
+            <h1 id="videoTitleDisplay" class="watch-title">Loading title...</h1>
+            
+            <div class="video-actions">
+                <div class="channel-info">
+                    <div class="channel-icon"><i class="fa-solid fa-user"></i></div>
+                    <div>
+                        <h3>Vidora Creator</h3>
+                        <p class="sub-text">100K subscribers</p>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-btn"><i class="fa-regular fa-thumbs-up"></i> Like</button>
+                    <button class="action-btn"><i class="fa-solid fa-share"></i> Share</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const SUPABASE_URL = "https://zandggntfbtvicujtmk.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_i1v72sFTP5M39a9JvMN-g_SU9C6ur3";
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // URL থেকে ভিডিওর নাম বের করা
+        const urlParams = new URLSearchParams(window.location.search);
+        const videoName = urlParams.get('v');
+
+        if (videoName) {
+            const { data } = supabase.storage.from('videos').getPublicUrl(videoName);
+            document.getElementById('mainVideoPlayer').src = data.publicUrl;
+            document.getElementById('videoTitleDisplay').innerText = videoName.replace(/^\d+_/, '');
+        } else {
+            document.getElementById('videoTitleDisplay').innerText = "Video not found!";
+        }
+    </script>
+</body>
+</html>
