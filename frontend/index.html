@@ -1,25 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vidora</title>
-  <link rel="stylesheet" href="style.css">
-</head>
+<!-- ভিডিও আপলোড ফর্ম -->
+<form id="<input type="text" id="robotCheck"...>>
+    
+    <!-- ভিডিও শিরোনামের ইনপুট -->
+    <input type="text" id="videoTitle" placeholder="ভিডিও শিরোনাম লিখুন..." required>
+    
+    <!-- ভিডিও ফাইল সিলেক্ট ইনপুট -->
+    <input type="file" id="videoFile" required>
 
-<body>
-  <header>
-    <h1>Vidora</h1>
-    <p>AI-powered video sharing platform</p>
-  </header>
+    <!-- 🛑 রোবট চেক ফিল্ড (এটি CSS দিয়ে লুকানো থাকবে, মানুষ দেখতে পাবে না কিন্তু বট দেখতে পেয়ে পূরণ করার চেষ্টা করবে) -->
+    <input type="text" id="robotCheck" name="robotCheck" style="display:none !important;" tabindex="-1" autocomplete="off">
 
-  <main>
-    <h2>Latest Videos</h2>
+    <!-- সাবমিট বাটন -->
+    <button type="submit">Upload Video</button>
+</form>
 
-    <div class="video-card">
-      <h3>Welcome to Vidora</h3>
-      <p>Videos will be displayed here.</p>
-    </div>
-  </main>
-</body>
-</html>
+<!-- সিকিউরিটি স্ক্রিপ্ট লিঙ্ক -->
+<script src="script.js"></script>
