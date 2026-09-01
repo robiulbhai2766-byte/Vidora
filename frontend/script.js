@@ -5,7 +5,7 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let pageLoadTime = Date.now();
 
-// Modal Logic
+// Modal Functions
 function openModal() {
     document.getElementById('uploadModal').style.display = 'flex';
 }
@@ -31,7 +31,6 @@ document.getElementById('uploadForm').addEventListener('submit', async function(
     }
 
     const fileInput = document.getElementById('videoFile');
-    const titleInput = document.getElementById('videoTitle');
     const file = fileInput.files[0];
 
     if (!file) return;
@@ -71,12 +70,17 @@ async function loadVideos() {
         
         const videoCard = document.createElement('div');
         videoCard.className = 'video-card';
+        // ক্লিক করলে watch.html পেজে যাবে
+        videoCard.onclick = () => {
+            window.location.href = `watch.html?v=${encodeURIComponent(file.name)}`;
+        };
+
         videoCard.innerHTML = `
-            <video class="video-thumb" controls src="${publicUrlData.publicUrl}"></video>
+            <video class="video-thumb" src="${publicUrlData.publicUrl}#t=0.5" preload="metadata"></video>
             <div class="video-details">
                 <div class="channel-icon"><i class="fa-solid fa-play"></i></div>
                 <div class="video-info">
-                    <div class="video-title">${file.name}</div>
+                    <div class="video-title">${file.name.replace(/^\d+_/, '')}</div>
                     <div class="channel-name">Vidora Creator</div>
                 </div>
             </div>
