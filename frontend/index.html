@@ -4,34 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vidora - AI Powered Video Sharing</title>
-    
-    <!-- Supabase JS Library (সুবাফেস কানেক্ট করার জন্য) -->
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-    <h2>Vidora Video Upload</h2>
+    <div class="container">
+        <h1>Vidora</h1>
+        <p class="subtitle">AI-Powered Video Sharing Platform</p>
 
-    <!-- ভিডিও আপলোড ফর্ম -->
-    <form id="uploadForm">
-        
-        <!-- ভিডিও শিরোনামের ইনপুট -->
-        <input type="text" id="videoTitle" placeholder="ভিডিও শিরোনাম লিখুন..." required>
-        <br><br>
-        
-        <!-- ভিডিও ফাইল সিলেক্ট ইনপুট -->
-        <input type="file" id="videoFile" accept="video/*" required>
-        <br><br>
+        <!-- ভিডিও আপলোড সেকশন -->
+        <div class="card">
+            <h2>ভিডিও আপলোড করুন</h2>
+            <form id="uploadForm">
+                <input type="text" id="videoTitle" placeholder="ভিডিও শিরোনাম লিখুন..." required>
+                <input type="file" id="videoFile" accept="video/*" required>
+                
+                <!-- 🛑 রোবট চেক (Honeypot) -->
+                <input type="text" id="robotCheck" name="robotCheck" style="display:none !important;" tabindex="-1" autocomplete="off">
 
-        <!-- 🛑 রোবট চেক ফিল্ড (হানি পট) -->
-        <input type="text" id="robotCheck" name="robotCheck" style="display:none !important;" tabindex="-1" autocomplete="off">
+                <button type="submit" id="uploadBtn">Upload Video</button>
+            </form>
+        </div>
 
-        <!-- সাবমিট বাটন -->
-        <button type="submit">Upload Video</button>
-    </form>
+        <!-- ভিডিও গ্যালারি সেকশন -->
+        <div class="gallery-section">
+            <h2>সাম্প্রতিক আপলোডসমূহ</h2>
+            <div id="videoGallery" class="gallery-grid">
+                <p>ভিডিও লোড হচ্ছে...</p>
+            </div>
+        </div>
+    </div>
 
-    <!-- সিকিউরিটি ও আপলোড স্ক্রিপ্ট -->
     <script src="script.js"></script>
-
 </body>
 </html>
