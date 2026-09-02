@@ -4,9 +4,140 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vidora - Watch Video</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0f0f0f;
+            color: #f1f1f1;
+        }
+
+        /* Header */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #0f0f0f;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #272727;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            color: #ff0000;
+            font-size: 1.8rem;
+        }
+
+        .upload-btn {
+            background-color: #272727;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .upload-btn:hover {
+            background-color: #3f3f3f;
+        }
+
+        /* Watch Page */
+        .watch-container {
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .video-player-box video {
+            width: 100%;
+            max-height: 550px;
+            background-color: #000;
+            border-radius: 12px;
+        }
+
+        .watch-title {
+            font-size: 1.3rem;
+            margin: 15px 0 10px 0;
+        }
+
+        .video-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #272727;
+            padding-bottom: 15px;
+        }
+
+        .channel-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .channel-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: #272727;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .channel-details h3 {
+            font-size: 1rem;
+        }
+
+        .sub-text {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: #272727;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 18px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-btn:hover {
+            background: #3f3f3f;
+        }
+    </style>
 </head>
 <body>
 
@@ -28,7 +159,7 @@
             <div class="video-actions">
                 <div class="channel-info">
                     <div class="channel-icon"><i class="fa-solid fa-user"></i></div>
-                    <div>
+                    <div class="channel-details">
                         <h3>Vidora Creator</h3>
                         <p class="sub-text">100K subscribers</p>
                     </div>
@@ -42,16 +173,21 @@
     </main>
 
     <script>
-        const SUPABASE_URL = "https://zandggntfbtvicujtmk.supabase.co";
-        const SUPABASE_KEY = "sb_publishable_i1v72sFTP5M39a9JvMN-g_SU9C6ur3";
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Load Supabase config from environment or use defaults
+        const SUPABASE_URL = window.SUPABASE_URL || "https://zandggntfbtvicujtmk.supabase.co";
+        const SUPABASE_KEY = window.SUPABASE_KEY || "sb_publishable_i1v72sFTP5M39a9JvMN-g_SU9C6ur3";
+        
+        let supabaseClient;
+        if (window.supabase && window.supabase.createClient) {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        }
 
-        // URL থেকে ভিডিওর নাম বের করা
+        // Get video name from URL
         const urlParams = new URLSearchParams(window.location.search);
         const videoName = urlParams.get('v');
 
-        if (videoName) {
-            const { data } = supabase.storage.from('videos').getPublicUrl(videoName);
+        if (videoName && supabaseClient) {
+            const { data } = supabaseClient.storage.from('VIDEOS').getPublicUrl(videoName);
             document.getElementById('mainVideoPlayer').src = data.publicUrl;
             document.getElementById('videoTitleDisplay').innerText = videoName.replace(/^\d+_/, '');
         } else {
