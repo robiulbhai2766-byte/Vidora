@@ -61,7 +61,7 @@
     <main class="main-content">
         <h2>Recommended Videos</h2>
         <div class="video-grid" id="videoGallery">
-            <p>Loading videos...</p>
+            <p id="statusMsg">Loading videos...</p>
         </div>
     </main>
 
@@ -80,11 +80,16 @@
 
     <script>
         const SUPABASE_URL = "https://zandggntfbtvicujtmk.supabase.co";
-        const SUPABASE_KEY = "sb_publishable_i1v72sFTP5M39a9JvMN-g_SU9C6ur3";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InphbmRnZ250ZmJ0dmljdWpqdG1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyNjgyNTYsImV4cCI6MjEwMzg0NDI1Nn0.v_KtQfY1IRYydgSh2fuWJi1ZsKKBrlRysk7vxYFdwkE";
         
-        let supabaseClient;
-        if (window.supabase && window.supabase.createClient) {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let sbClient = null;
+
+        function initSupabase() {
+            if (window.supabase && window.supabase.createClient) {
+                sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                return true;
+            }
+            return false;
         }
 
         let pageLoadTime = Date.now();
@@ -100,27 +105,31 @@
         document.getElementById('uploadForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
+            if (!sbClient && !initSupabase()) {
+                alert("Supabase connection error! Please refresh.");
+                return;
+            }
+
             const robotField = document.getElementById('robotCheck').value;
             if (robotField !== "") {
                 alert("🚨 Security Alert: Bot detected!");
-                return false;
+                return;
             }
 
             let timeTaken = (Date.now() - pageLoadTime) / 1000;
-            if (timeTaken < 3) {
+            if (timeTaken < 2) {
                 alert("🚨 Security Alert: Submitted too fast!");
-                return false;
+                return;
             }
 
             const fileInput = document.getElementById('videoFile');
             const file = fileInput.files[0];
-
             if (!file) return;
 
             alert("🤖 Security Passed! Uploading video...");
 
             const fileName = `${Date.now()}_${file.name}`;
-            const { data, error } = await supabaseClient.storage.from('VIDEOS').upload(fileName, file);
+            const { data, error } = await sbClient.storage.from('VIDEOS').upload(fileName, file);
 
             if (error) {
                 alert("Upload Error: " + error.message);
@@ -134,47 +143,51 @@
         async function loadVideos() {
             const gallery = document.getElementById('videoGallery');
             
-            if (!supabaseClient) {
+            if (!sbClient && !initSupabase()) {
                 setTimeout(loadVideos, 500);
                 return;
             }
 
-            const { data, error } = await supabaseClient.storage.from('VIDEOS').list('', {
-                limit: 100,
-                sortBy: { column: 'created_at', order: 'desc' }
-            });
+            try {
+                const { data, error } = await sbClient.storage.from('VIDEOS').list('', {
+                    limit: 100,
+                    sortBy: { column: 'created_at', order: 'desc' }
+                });
 
-            if (error || !data || data.length === 0) {
-                gallery.innerHTML = "<p>No videos uploaded yet. Click '+ Create' to upload!</p>";
-                return;
-            }
+                if (error || !data || data.length === 0) {
+                    gallery.innerHTML = "<p>No videos uploaded yet. Click '+ Create' to upload!</p>";
+                    return;
+                }
 
-            gallery.innerHTML = "";
+                gallery.innerHTML = "";
 
-            data.forEach(file => {
-                const { data: publicUrlData } = supabaseClient.storage.from('VIDEOS').getPublicUrl(file.name);
-                
-                const videoCard = document.createElement('div');
-                videoCard.className = 'video-card';
-                videoCard.onclick = () => {
-                    window.location.href = `watch.html?v=${encodeURIComponent(file.name)}`;
-                };
+                data.forEach(file => {
+                    const { data: publicUrlData } = sbClient.storage.from('VIDEOS').getPublicUrl(file.name);
+                    
+                    const videoCard = document.createElement('div');
+                    videoCard.className = 'video-card';
+                    videoCard.onclick = () => {
+                        window.location.href = `watch.html?v=${encodeURIComponent(file.name)}`;
+                    };
 
-                videoCard.innerHTML = `
-                    <video class="video-thumb" src="${publicUrlData.publicUrl}#t=0.5" preload="metadata"></video>
-                    <div class="video-details">
-                        <div class="channel-icon"><i class="fa-solid fa-play"></i></div>
-                        <div class="video-info">
-                            <div class="video-title">${file.name.replace(/^\d+_/, '')}</div>
-                            <div class="channel-name">Vidora Creator</div>
+                    videoCard.innerHTML = `
+                        <video class="video-thumb" src="${publicUrlData.publicUrl}#t=0.5" preload="metadata"></video>
+                        <div class="video-details">
+                            <div class="channel-icon"><i class="fa-solid fa-play"></i></div>
+                            <div class="video-info">
+                                <div class="video-title">${file.name.replace(/^\d+_/, '')}</div>
+                                <div class="channel-name">Vidora Creator</div>
+                            </div>
                         </div>
-                    </div>
-                `;
-                gallery.appendChild(videoCard);
-            });
+                    `;
+                    gallery.appendChild(videoCard);
+                });
+            } catch (err) {
+                gallery.innerHTML = "<p>Error: " + err.message + "</p>";
+            }
         }
 
-        window.onload = loadVideos;
+        window.addEventListener('load', loadVideos);
     </script>
 </body>
 </html>
