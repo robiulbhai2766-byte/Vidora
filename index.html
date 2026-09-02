@@ -287,10 +287,14 @@
     </div>
 
     <script>
-        const SUPABASE_URL = "https://zandggntfbtvicujtmk.supabase.co";
-        const SUPABASE_KEY = "sb_publishable_i1v72sFTP5M39a9JvMN-g_SU9C6ur3";
+        // Load Supabase config from environment or use defaults
+        const SUPABASE_URL = window.SUPABASE_URL || "https://zandggntfbtvicujtmk.supabase.co";
+        const SUPABASE_KEY = window.SUPABASE_KEY || "sb_publishable_i1v72sFTP5M39a9JvMN-g_SU9C6ur3";
 
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let supabaseClient;
+        if (window.supabase && window.supabase.createClient) {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        }
 
         let pageLoadTime = Date.now();
 
@@ -326,7 +330,7 @@
             alert("🤖 Security Passed! Uploading video...");
 
             const fileName = `${Date.now()}_${file.name}`;
-            const { data, error } = await supabase.storage.from('videos').upload(fileName, file);
+            const { data, error } = await supabaseClient.storage.from('VIDEOS').upload(fileName, file);
 
             if (error) {
                 alert("Upload Error: " + error.message);
@@ -341,25 +345,30 @@
         async function loadVideos() {
             const gallery = document.getElementById('videoGallery');
             
-            const { data, error } = await supabase.storage.from('videos').list('', {
+            if (!supabaseClient) {
+                setTimeout(loadVideos, 500);
+                return;
+            }
+
+            const { data, error } = await supabaseClient.storage.from('VIDEOS').list('', {
                 limit: 100,
                 sortBy: { column: 'created_at', order: 'desc' }
             });
 
             if (error || !data || data.length === 0) {
-                gallery.innerHTML = "<p>No videos uploaded yet.</p>";
+                gallery.innerHTML = "<p>No videos uploaded yet. Click '+ Create' to upload!</p>";
                 return;
             }
 
             gallery.innerHTML = "";
 
             data.forEach(file => {
-                const { data: publicUrlData } = supabase.storage.from('videos').getPublicUrl(file.name);
+                const { data: publicUrlData } = supabaseClient.storage.from('VIDEOS').getPublicUrl(file.name);
                 
                 const videoCard = document.createElement('div');
                 videoCard.className = 'video-card';
                 videoCard.onclick = () => {
-                    window.location.href = `frontend/watch.html?v=${encodeURIComponent(file.name)}`;
+                    window.location.href = `watch.html?v=${encodeURIComponent(file.name)}`;
                 };
 
                 videoCard.innerHTML = `
